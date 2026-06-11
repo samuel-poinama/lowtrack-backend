@@ -24,8 +24,9 @@ jobs:
         context: .
         file: ./Dockerfile.test
         push: false
+        load: true
         tags: lowtrack-backend-test:latest
-        
+
     - name: Run tests
       shell: bash
       run: docker run --rm lowtrack-backend-test:latest
