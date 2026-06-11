@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+
+jobs:
+  build-and-test:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v4
+    
+    - name: Build tests
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./Dockerfile.test
+        push: false
+        load: true
+        tags: lowtrack-backend-test:latest
+
+    - name: Run tests
+      shell: bash
+      run: docker run --rm lowtrack-backend-test:latest
+
+    - name: Build Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./Dockerfile
+        push: false
