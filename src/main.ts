@@ -1,11 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const configService = app.get('ConfigService');
+  const configService = app.get(ConfigService);
   const environment = configService.get('NODE_ENV') || 'development';
 
   if (environment !== 'production') {
@@ -16,8 +17,8 @@ async function bootstrap() {
       .addTag('lowtrack')
       .build();
 
-    const document = app.get('SwaggerModule').createDocument(app, config);
-    app.get('SwaggerModule').setup('api', app, document);
+    const documentFactory = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, documentFactory);
   }
 
 
